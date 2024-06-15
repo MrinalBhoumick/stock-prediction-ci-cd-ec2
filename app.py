@@ -5,6 +5,7 @@ import yfinance as yf
 import numpy as np
 from tensorflow.keras.layers import Dense, Dropout, LSTM
 from tensorflow.keras.models import Sequential, load_model
+from custom_module import CustomLayer
 from sklearn.preprocessing import MinMaxScaler
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
@@ -92,7 +93,6 @@ async def predict(ticker_data: TickerData):
 
 # Load the pre-trained model
 model = load_model('keras_model.h5')
-model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
 
 # Streamlit setup
 def run_streamlit():
