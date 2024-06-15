@@ -15,7 +15,7 @@ import uvicorn
 import requests
 
 # Constants
-START = "2020-01-01"
+START = "2014-01-01"
 TODAY = date.today().strftime("%Y-%m-%d")
 
 # Predefined list of stock tickers with their names
