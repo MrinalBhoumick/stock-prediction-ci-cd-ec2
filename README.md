@@ -1,4 +1,4 @@
-# Stock Price Prediction App using LSTM, FastAPI, and Streamlit
+## Stock Price Prediction App using LSTM, FastAPI, and Streamlit
 
 This project demonstrates how to predict stock prices using LSTM (Long Short-Term Memory) neural networks. The prediction model is integrated with FastAPI for creating a backend API and Streamlit for building an interactive web application frontend.
 
@@ -30,7 +30,23 @@ This project demonstrates how to predict stock prices using LSTM (Long Short-Ter
    cd stock-price-prediction-app
    ```
 
-2. Install dependencies:
+2. Create and activate a virtual environment (optional but recommended):
+
+   ```bash
+   # Create a virtual environment (Linux/macOS)
+   python3 -m venv venv
+   
+   # Activate the virtual environment (Linux/macOS)
+   source venv/bin/activate
+   
+   # Create a virtual environment (Windows)
+   python -m venv venv
+   
+   # Activate the virtual environment (Windows)
+   venv\Scripts\activate
+   ```
+
+3. Install dependencies:
 
    ```bash
    pip install -r requirements.txt
@@ -77,4 +93,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-Feel free to customize this `README.md` file further based on your specific project details, additional features, or any other relevant information you'd like to include!
+Feel free to adjust the instructions or add more details specific to your project as needed. This setup ensures that users can create a clean environment with all dependencies installed before running the application.
