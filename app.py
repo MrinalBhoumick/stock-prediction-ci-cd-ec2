@@ -92,6 +92,7 @@ async def predict(ticker_data: TickerData):
 
 # Load the pre-trained model
 model = load_model('keras_model.h5')
+model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
 
 # Streamlit setup
 def run_streamlit():
