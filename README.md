@@ -1,203 +1,96 @@
-import pandas as pd
-from datetime import date
-import matplotlib.pyplot as plt
-import yfinance as yf
-import numpy as np
-from tensorflow.keras.layers import Dense, Dropout, LSTM
-from tensorflow.keras.models import Sequential, load_model
-from sklearn.preprocessing import MinMaxScaler
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-import streamlit as st
-import threading
-import uvicorn
-import requests
+## Stock Price Prediction App using LSTM, FastAPI, and Streamlit
 
-pandas: Used for data manipulation and handling.
-datetime: Handles dates and times.
-matplotlib.pyplot: Provides plotting functions.
-yfinance: Fetches financial data from Yahoo Finance.
-numpy: Essential for numerical operations.
-tensorflow.keras: Implements deep learning models like LSTM.
-sklearn.preprocessing.MinMaxScaler: Scales data between 0 and 1.
-fastapi: Framework for building APIs quickly with Python.
-pydantic.BaseModel: Used for data validation in FastAPI.
-streamlit: For building interactive web applications.
-threading: Enables concurrent execution of FastAPI and Streamlit.
-uvicorn: ASGI server for running FastAPI applications.
-requests: Makes HTTP requests to the FastAPI backend.
+This project demonstrates how to predict stock prices using LSTM (Long Short-Term Memory) neural networks. The prediction model is integrated with FastAPI for creating a backend API and Streamlit for building an interactive web application frontend.
 
-=================================================================================================================================
+## Features
 
-START = "2020-01-01"
-TODAY = date.today().strftime("%Y-%m-%d")
+- **Fetch Data**: Retrieve historical stock price data from Yahoo Finance.
+- **Preprocess Data**: Scale and prepare data for LSTM model training.
+- **Train LSTM Model**: Build and train an LSTM model using TensorFlow/Keras.
+- **Predict Prices**: Make predictions for future stock prices.
+- **Interactive UI**: Streamlit interface for users to select stocks, view predictions, and compare with actual prices.
+- **Concurrent Execution**: FastAPI serves predictions while Streamlit provides interactive visualization, running concurrently using threading.
 
-# Predefined list of stock tickers with their names
-STOCK_TICKERS = {
-    'AAPL': 'Apple Inc.',
-    'MSFT': 'Microsoft Corporation',
-    'GOOGL': 'Alphabet Inc.',
-    # Add more stock tickers as needed
-}
+## Technologies Used
 
-START and TODAY: Constants for specifying the start and end dates for fetching stock data.
-STOCK_TICKERS: A dictionary mapping stock ticker symbols to their corresponding company names. This will be used to populate the dropdown menu in the Streamlit app.
+- Python
+- TensorFlow/Keras
+- FastAPI
+- Streamlit
+- pandas, numpy, matplotlib
+- yfinance
+- scikit-learn (sklearn)
 
-=================================================================================================================================
+## Installation
 
-app = FastAPI()
+1. Clone the repository:
 
-class TickerData(BaseModel):
-    ticker: str
+   ```bash
+   git clone https://github.com/your_username/stock-price-prediction-app.git
+   cd stock-price-prediction-app
+   ```
 
+2. Create and activate a virtual environment (optional but recommended):
 
-=================================================================================================================================
+   ```bash
+   # Create a virtual environment (Linux/macOS)
+   python3 -m venv venv
+   
+   # Activate the virtual environment (Linux/macOS)
+   source venv/bin/activate
+   
+   # Create a virtual environment (Windows)
+   python -m venv venv
+   
+   # Activate the virtual environment (Windows)
+   venv\Scripts\activate
+   ```
 
-app: Instance of FastAPI used to define API endpoints.
-TickerData: Pydantic BaseModel for validating JSON data sent to the /predict endpoint. It ensures that the request body contains a ticker field of type str.
+3. Install dependencies:
 
-=================================================================================================================================
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-def load_data(ticker):
-    data = yf.download(ticker, START, TODAY)
-    data.reset_index(inplace=True)
-    return data
+## Usage
 
-===============================================================================================================================
+### Running the Application
 
-load_data: Function that uses Yahoo Finance (yf.download) to fetch historical stock data for a given ticker from START to TODAY.
+1. Start the FastAPI server:
 
-================================================================================================================================
+   ```bash
+   uvicorn app:app --reload
+   ```
 
-def preprocess_data(data, scaler):
-    data_close = data[['Close']].values.reshape(-1, 1)
-    scaled_data = scaler.transform(data_close)
-    x_input = []
-    for i in range(100, scaled_data.shape[0]):
-        x_input.append(scaled_data[i-100:i])
-    x_input = np.array(x_input)
-    return x_input
+   This will start the FastAPI server on `http://localhost:8000`.
 
+2. Run the Streamlit app:
 
-================================================================================================================================
+   ```bash
+   streamlit run app.py
+   ```
 
-preprocess_data: Function that preprocesses the fetched data (data) by scaling the closing prices ('Close' column) and creating input sequences (x_input) for the LSTM model.
+   This will launch the Streamlit app in your default web browser.
 
+3. Select a stock ticker from the dropdown menu in the Streamlit app and click on "Predict" to see the predictions and actual prices.
 
-================================================================================================================================
+## Files and Directory Structure
 
-@app.post("/predict")
-async def predict(ticker_data: TickerData):
-    data = load_data(ticker_data.ticker)
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    full_data = data[['Close']].values
-    scaler.fit(full_data)
+- **app.py**: Contains FastAPI backend code for data fetching, model prediction, and API endpoints.
+- **LSTM-Model.ipynb**: Jupyter Notebook for LSTM model training and experimentation.
+- **README.md**: Project overview, installation guide, and usage instructions.
+- **requirements.txt**: List of Python dependencies required to run the application.
+- **templates/**: Directory for HTML templates (if any).
+- **static/**: Directory for static files (if any).
 
-    past_100_days = data[['Close']].values[-100:]
-    past_100_days = past_100_days.reshape(-1, 1)
-    full_data = np.concatenate((past_100_days, data[['Close']].values), axis=0)
-    scaled_data = scaler.transform(full_data)
+## Contributing
 
-    x_test = []
-    for i in range(100, scaled_data.shape[0]):
-        x_test.append(scaled_data[i-100:i])
-    x_test = np.array(x_test)
+Contributions are welcome! Please fork the repository and create a pull request with your improvements or suggestions.
 
-    predictions = model.predict(x_test)
-    predictions_rescaled = scaler.inverse_transform(predictions)
-    actual_values = data['Close'].values[100:]
+## License
 
-    return JSONResponse(content={"prediction": predictions_rescaled.tolist(), "actual": actual_values.tolist()})
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-@app.post("/predict"): Decorator for defining a POST endpoint /predict in FastAPI.
-predict: Function that handles the /predict endpoint. It loads data for the specified ticker, preprocesses it, makes predictions using a pre-trained LSTM model (model), and returns JSON response containing predicted (predictions_rescaled) and actual (actual_values) closing prices.
+---
 
-========================================================================================================================================
-
-
-# Streamlit setup
-def run_streamlit():
-    st.title('Stock Price Prediction')
-
-    # User input for stock ticker symbol
-    st.header('Select Stock Ticker Symbol')
-    ticker = st.selectbox('Select stock ticker symbol:', list(STOCK_TICKERS.keys()))
-
-    # Load data button
-    if st.button('Predict'):
-        if ticker:
-            try:
-                # Fetch data using yfinance
-                data = yf.download(ticker, START, TODAY)
-                if not data.empty:
-                    st.success('Data loaded successfully!')
-                    st.write(data.head())  # Display the first few rows of the loaded data
-                    
-                    # Prepare data for prediction
-                    response = requests.post("http://127.0.0.1:8000/predict", json={"ticker": ticker})
-                    if response.status_code == 200:
-                        prediction_data = response.json()
-                        predictions = prediction_data["prediction"]
-                        actual = prediction_data["actual"]
-                        
-                        st.success('Prediction successful!')
-
-                        # Show stock name
-                        stock_name = STOCK_TICKERS[ticker]
-                        st.subheader(f'Stock: {stock_name} ({ticker})')
-                        
-                        # Show predicted stock price
-                        if predictions:
-                            latest_predicted_price = predictions[-1][0]  # The latest predicted price is the last element in the prediction list
-                            st.write(f'Predicted Closing Price: ${latest_predicted_price:.2f}')
-                        
-                        # Plot actual vs predicted prices
-                        plt.figure(figsize=(12, 6))
-                        plt.plot(actual, label='Actual Price')
-                        plt.plot(range(100, 100 + len(predictions)), [p[0] for p in predictions], label='Predicted Price')
-                        plt.xlabel('Time')
-                        plt.ylabel('Price')
-                        plt.legend()
-                        plt.grid(True)
-                        st.pyplot(plt)
-                    else:
-                        st.error('Error in prediction API call.')
-                else:
-                    st.error('No data fetched for the ticker symbol.')
-            except Exception as e:
-                st.error(f'Error loading data: {e}')
-        else:
-            st.error('Please select a stock ticker symbol.')
-
-
-====================================================================================================================================
-
-run_streamlit: Function that sets up the Streamlit app interface. It displays a dropdown menu to select a stock ticker symbol (ticker). When the user clicks "Predict," it fetches data for the selected ticker, sends a request to the FastAPI /predict endpoint, retrieves predictions, and displays them along with actual prices in a plot.
-
-
-
-
-if __name__ == "__main__":
-    # Start FastAPI server in a thread
-    def run_fastapi():
-        uvicorn.run(app, host="127.0.0.1", port=8000)
-
-    fastapi_thread = threading.Thread(target=run_fastapi)
-    fastapi_thread.start()
-
-    # Run Streamlit app
-    run_streamlit()
-
-
-
-if name == "main": Checks if the script is being run directly.
-run_fastapi: Function that starts the FastAPI server (uvicorn.run) in a separate thread (fastapi_thread).
-run_streamlit: Function call to start the Streamlit application, allowing both FastAPI and Streamlit to run concurrently.
-Explanation Summary
-This app.py script integrates FastAPI and Streamlit for stock price prediction using an LSTM model. It fetches historical stock data, preprocesses it, makes predictions, and visualizes actual vs predicted prices. FastAPI serves as the backend API, handling data fetching, processing, and prediction, while Streamlit provides the frontend interface for user interaction and visualization. The two are coordinated to run concurrently using threading.
-
-
-
-
-
+Feel free to adjust the instructions or add more details specific to your project as needed. This setup ensures that users can create a clean environment with all dependencies installed before running the application.
