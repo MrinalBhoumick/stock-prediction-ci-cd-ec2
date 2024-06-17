@@ -1,7 +1,5 @@
-Sure, here's a comprehensive `README.md` file for your project, explaining how the application works, how the frontend is integrated, how the backend functions, and details about LSTM.
 
-```markdown
-# Stock Price Prediction using LSTM, FastAPI, and Streamlit
+## Stock Price Prediction using LSTM, FastAPI, and Streamlit
 
 ## Overview
 
