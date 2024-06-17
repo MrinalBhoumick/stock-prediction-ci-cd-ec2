@@ -15,11 +15,12 @@ import uvicorn
 import requests
 
 # Constants
-START = "2014-01-01"
+START = "2009-01-01"
 TODAY = date.today().strftime("%Y-%m-%d")
 
 # Predefined list of stock tickers with their names
 STOCK_TICKERS = {
+    'TCS.NS':'TCS India',
     'AAPL': 'Apple Inc.',
     'MSFT': 'Microsoft Corporation',
     'GOOGL': 'Alphabet Inc.',

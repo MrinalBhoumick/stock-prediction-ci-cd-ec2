@@ -1,96 +1,124 @@
-## Stock Price Prediction App using LSTM, FastAPI, and Streamlit
 
-This project demonstrates how to predict stock prices using LSTM (Long Short-Term Memory) neural networks. The prediction model is integrated with FastAPI for creating a backend API and Streamlit for building an interactive web application frontend.
+
+# Stock Price Prediction using LSTM, FastAPI, and Streamlit
+
+This repository contains a stock price prediction application that uses a Long Short-Term Memory (LSTM) neural network to predict future stock prices. The application is built using FastAPI and Streamlit, and can be deployed using Docker.
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Setup](#setup)
+  - [Creating a Virtual Environment](#creating-a-virtual-environment)
+  - [Running the Application](#running-the-application)
+  - [Docker Setup](#docker-setup)
+- [Usage](#usage)
+- [How It Works](#how-it-works)
+  - [LSTM Overview](#lstm-overview)
+  - [Benefits of LSTM](#benefits-of-lstm)
+  - [Other Algorithms](#other-algorithms)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Introduction
+
+This application allows users to predict stock prices for various companies using historical stock data. The predictions are made using an LSTM neural network, which is particularly suited for time series forecasting.
 
 ## Features
 
-- **Fetch Data**: Retrieve historical stock price data from Yahoo Finance.
-- **Preprocess Data**: Scale and prepare data for LSTM model training.
-- **Train LSTM Model**: Build and train an LSTM model using TensorFlow/Keras.
-- **Predict Prices**: Make predictions for future stock prices.
-- **Interactive UI**: Streamlit interface for users to select stocks, view predictions, and compare with actual prices.
-- **Concurrent Execution**: FastAPI serves predictions while Streamlit provides interactive visualization, running concurrently using threading.
+- Predict stock prices using an LSTM neural network.
+- View historical stock prices and predicted future prices.
+- Interactive user interface built with Streamlit.
+- API for fetching predictions built with FastAPI.
 
-## Technologies Used
+## Requirements
 
-- Python
-- TensorFlow/Keras
-- FastAPI
-- Streamlit
-- pandas, numpy, matplotlib
-- yfinance
-- scikit-learn (sklearn)
+- Python 3.7 or higher
+- Docker (optional, for containerized deployment)
 
-## Installation
+## Setup
+
+### Creating a Virtual Environment
+
+To set up the application in a virtual environment, follow these steps:
 
 1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/your_username/stock-price-prediction-app.git
-   cd stock-price-prediction-app
-   ```
+    ```sh
+    git clone https://github.com/yourusername/stock-price-prediction
+    cd stock-price-prediction
+    ```
 
-2. Create and activate a virtual environment (optional but recommended):
+2. Create and activate a virtual environment:
 
-   ```bash
-   # Create a virtual environment (Linux/macOS)
-   python3 -m venv venv
-   
-   # Activate the virtual environment (Linux/macOS)
-   source venv/bin/activate
-   
-   # Create a virtual environment (Windows)
-   python -m venv venv
-   
-   # Activate the virtual environment (Windows)
-   venv\Scripts\activate
-   ```
+    ```sh
+    python -m venv venv
+    source venv/bin/activate   # On Windows use `venv\Scripts\activate`
+    ```
 
-3. Install dependencies:
+3. Install the required packages:
 
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-## Usage
+    ```sh
+    pip install -r requirements.txt
+    ```
 
 ### Running the Application
 
 1. Start the FastAPI server:
 
-   ```bash
-   uvicorn app:app --reload
-   ```
+    ```sh
+    uvicorn app:app --reload
+    ```
 
-   This will start the FastAPI server on `http://localhost:8000`.
+2. In a new terminal, run the Streamlit app:
 
-2. Run the Streamlit app:
+    ```sh
+    streamlit run app.py
+    ```
 
-   ```bash
-   streamlit run app.py
-   ```
+### Docker Setup
 
-   This will launch the Streamlit app in your default web browser.
+To build and run the application using Docker:
 
-3. Select a stock ticker from the dropdown menu in the Streamlit app and click on "Predict" to see the predictions and actual prices.
+1. Build the Docker image:
 
-## Files and Directory Structure
+    ```sh
+    docker build -t stock-price-prediction-app .
+    ```
 
-- **app.py**: Contains FastAPI backend code for data fetching, model prediction, and API endpoints.
-- **LSTM-Model.ipynb**: Jupyter Notebook for LSTM model training and experimentation.
-- **README.md**: Project overview, installation guide, and usage instructions.
-- **requirements.txt**: List of Python dependencies required to run the application.
-- **templates/**: Directory for HTML templates (if any).
-- **static/**: Directory for static files (if any).
+2. Run the Docker container:
+
+    ```sh
+    docker run -d -p 8000:8000 -p 8501:8501 stock-price-prediction-app
+    ```
+
+## Usage
+
+1. Open your web browser and navigate to `http://localhost:8501` to access the Streamlit interface.
+2. Select a stock ticker symbol from the dropdown menu and click "Predict" to see the predictions.
+
+## How It Works
+
+### LSTM Overview
+
+LSTM (Long Short-Term Memory) is a type of recurrent neural network (RNN) that is well-suited for sequence prediction problems. It can learn and remember over long sequences and is resistant to the vanishing gradient problem.
+
+### Benefits of LSTM
+
+- **Handles Long-Term Dependencies**: LSTMs can capture long-term dependencies in the data.
+- **Resistant to Vanishing Gradient**: The architecture of LSTMs helps mitigate the vanishing gradient problem, making them suitable for long time series.
+
+### Other Algorithms
+
+While LSTMs are highly effective for time series prediction, other algorithms like ARIMA, Prophet, and simple feedforward neural networks can also be used. However, LSTMs generally provide better performance for complex patterns in time series data.
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and create a pull request with your improvements or suggestions.
+Contributions are welcome! Please fork this repository and submit a pull request for any improvements or bug fixes.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
-
-Feel free to adjust the instructions or add more details specific to your project as needed. This setup ensures that users can create a clean environment with all dependencies installed before running the application.
