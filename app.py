@@ -15,7 +15,7 @@ import requests
 from forex_python.converter import CurrencyRates
 
 # Constants
-START = "2010-01-01"
+START = "2009-01-01"
 TODAY = date.today().strftime("%Y-%m-%d")
 
 # Predefined list of stock tickers with their names
@@ -119,6 +119,22 @@ def run_streamlit():
                     st.success('Data loaded successfully!')
                     st.write(data.head())  # Display the first few rows of the loaded data
                     
+                    # Calculate moving averages
+                    data['MA100'] = data['Close'].rolling(100).mean()
+                    data['MA200'] = data['Close'].rolling(200).mean()
+
+                    # Plot actual stock price and moving averages
+                    plt.figure(figsize=(12, 6))
+                    plt.plot(data['Close'], label='Actual Price')
+                    plt.plot(data['MA100'], label='100-day MA')
+                    plt.plot(data['MA200'], label='200-day MA')
+                    plt.xlabel('Date')
+                    plt.ylabel('Price')
+                    plt.legend()
+                    plt.title('Stock Price and Moving Averages')
+                    plt.grid(True)
+                    st.pyplot(plt)
+
                     # Prepare data for prediction
                     response = requests.post("http://127.0.0.1:8000/predict", json={"ticker": ticker})
                     if response.status_code == 200:
