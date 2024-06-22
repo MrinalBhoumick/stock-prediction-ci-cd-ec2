@@ -15,7 +15,7 @@ import requests
 from forex_python.converter import CurrencyRates
 
 # Constants
-START = "2019s-01-01"
+START = "2009-01-01"
 TODAY = date.today().strftime("%Y-%m-%d")
 
 # Predefined list of stock tickers with their names
