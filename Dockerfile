@@ -11,6 +11,14 @@ RUN pip install virtualenv
 RUN virtualenv /venv
 ENV PATH="/venv/bin:$PATH"
 
+# Install k6
+RUN apt-get update && \
+    apt-get install -y gnupg curl && \
+    curl -s https://dl.k6.io/key.asc | apt-key add - && \
+    echo "deb https://dl.k6.io/deb/ stable main" | tee /etc/apt/sources.list.d/k6.list && \
+    apt-get update && \
+    apt-get install -y k6
+
 # Copy the current directory contents into the container at /app
 COPY . /app
 
